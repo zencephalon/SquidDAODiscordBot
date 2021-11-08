@@ -21,12 +21,7 @@ const squidWethSushiswap = new Contract(SQUID_WETH_PAIR, abi, provider);
 
 const usdcWethSushiswap = new Contract(USDC_WETH_PAIR, abi, provider);
 
-// "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
-
 async function getSquidEthPrice() {
-  // const balance = await provider.getBalance("zencephalon.eth");
-
-  // console.log({ balance: ethers.utils.formatEther(balance) });
   const [r0, r1] = await squidWethSushiswap.functions["getReserves"]();
 
   const price = r1.div(r0).div(1e9);
@@ -35,11 +30,8 @@ async function getSquidEthPrice() {
 
 async function getEthUsdPrice() {
   const [r0, r1] = await usdcWethSushiswap.functions["getReserves"]();
-  console.log(r0.toString(), r1.toString());
 
   const price = r0.div(r1.div(1e12));
-
-  console.log({ price: price.toString() });
   return price;
 }
 
@@ -51,12 +43,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-  client.once("ready", () => {
-    console.log("Ready!");
-  });
+  const client = new Client({ ws: { intents: [Intents.FLAGS.GUILDS] } });
   await client.login(process.env.DISCORD_TOKEN);
-  const guilds = await client.guilds.fetch();
+  const guilds = await client.guilds.cache;
   const price = await getSquidEthPrice();
   const ethPrice = await getEthUsdPrice();
 
@@ -67,7 +56,6 @@ export default async function handler(
       const lastPrice = parseInt(n?.match(/^Ξ(\d+)/)?.[1] || "");
       const isFlat = lastPrice == price;
       const updown = isFlat ? "→" : lastPrice < price ? "↗" : "↘";
-      console.log({ lastPrice });
 
       g.me?.setNickname(
         `Ξ${price} ${updown}${isFlat ? "" : Math.abs(lastPrice - price)}`
@@ -76,7 +64,7 @@ export default async function handler(
   ]);
 
   await client.user?.setPresence({
-    activities: [{ name: `\$${price * ethPrice}`, type: 3 }],
+    activity: { name: `\$${price * ethPrice}`, type: 3 },
     status: "online",
   });
 
