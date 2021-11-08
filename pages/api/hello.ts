@@ -14,25 +14,32 @@ export const provider = new ethers.providers.InfuraProvider(
   process.env.INFURA_PROJECT
 );
 
-const sushiswap = new Contract(
-  // "0xc96f20099d96b37d7ede66ff9e4de59b9b1065b1",
-  "0xfad704847967d9067df7a60910399155fca43fe8",
-  abi,
-  provider
-);
+const SQUID_WETH_PAIR = "0xfad704847967d9067df7a60910399155fca43fe8";
+const USDC_WETH_PAIR = "0x397ff1542f962076d0bfe58ea045ffa2d347aca0";
 
-async function go() {
+const squidWethSushiswap = new Contract(SQUID_WETH_PAIR, abi, provider);
+
+const usdcWethSushiswap = new Contract(USDC_WETH_PAIR, abi, provider);
+
+// "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
+
+async function getSquidEthPrice() {
   // const balance = await provider.getBalance("zencephalon.eth");
 
   // console.log({ balance: ethers.utils.formatEther(balance) });
-  const [r0, r1] = await sushiswap.functions["getReserves"]();
-  const last0 = await sushiswap.functions["price0CumulativeLast"]();
-  const last1 = await sushiswap.functions["price1CumulativeLast"]();
+  const [r0, r1] = await squidWethSushiswap.functions["getReserves"]();
 
-  console.log(r0.toString(), r1.toString());
-  console.log(last0.toString(), last1.toString());
   const price = r1.div(r0).div(1e9);
-  console.log(price.toString());
+  return price;
+}
+
+async function getEthUsdPrice() {
+  const [r0, r1] = await usdcWethSushiswap.functions["getReserves"]();
+  console.log(r0.toString(), r1.toString());
+
+  const price = r0.div(r1.div(1e12));
+
+  console.log({ price: price.toString() });
   return price;
 }
 
@@ -50,7 +57,8 @@ export default async function handler(
   });
   await client.login(process.env.DISCORD_TOKEN);
   const guilds = await client.guilds.fetch();
-  const price = await go();
+  const price = await getSquidEthPrice();
+  const ethPrice = await getEthUsdPrice();
 
   await Promise.all([
     guilds.map(async (guild) => {
@@ -66,6 +74,11 @@ export default async function handler(
       );
     }),
   ]);
+
+  await client.user?.setPresence({
+    activities: [{ name: `\$${price * ethPrice}`, type: 3 }],
+    status: "online",
+  });
 
   res.status(200).json({ iluvu: true });
 }
