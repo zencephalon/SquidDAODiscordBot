@@ -26,8 +26,11 @@ async function go() {
 
   // console.log({ balance: ethers.utils.formatEther(balance) });
   const [r0, r1] = await sushiswap.functions["getReserves"]();
+  const last0 = await sushiswap.functions["price0CumulativeLast"]();
+  const last1 = await sushiswap.functions["price1CumulativeLast"]();
 
   console.log(r0.toString(), r1.toString());
+  console.log(last0.toString(), last1.toString());
   const price = r1.div(r0).div(1e9);
   console.log(price.toString());
   return price;
@@ -52,7 +55,15 @@ export default async function handler(
   await Promise.all([
     guilds.map(async (guild) => {
       const g = await guild.fetch();
-      g.me?.setNickname(`Ξ${price}`);
+      const n = g.me?.nickname;
+      const lastPrice = parseInt(n?.match(/^Ξ(\d+)/)?.[1] || "");
+      const isFlat = lastPrice == price;
+      const updown = isFlat ? "→" : lastPrice < price ? "↗" : "↘";
+      console.log({ lastPrice });
+
+      g.me?.setNickname(
+        `Ξ${price} ${updown}${isFlat ? "" : Math.abs(lastPrice - price)}`
+      );
     }),
   ]);
 
