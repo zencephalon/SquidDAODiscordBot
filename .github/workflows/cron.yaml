@@ -1,0 +1,12 @@
+name: 3-minute-cron
+on:
+  schedule:
+    - cron: "*/3 * * * *"
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poke discord bot
+        run: |
+          curl --request POST \
+          --url 'https://squid-dao-discord-bot.vercel.app/api/discord'
