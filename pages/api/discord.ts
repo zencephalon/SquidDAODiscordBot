@@ -70,9 +70,11 @@ export default async function handler(
       );
     })
   );
+  
+  const usdPrice = price * ethPrice;
 
   await client.user?.setPresence({
-    activity: { name: `\$${price * ethPrice}`, type: 3 },
+    activity: { name: `\$${usdPrice.toLocaleString()}`, type: 3 },
     status: "online",
   });
 
