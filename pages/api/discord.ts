@@ -44,12 +44,14 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const client = new Client({ ws: { intents: [Intents.FLAGS.GUILDS] } });
-  await client.login(process.env.DISCORD_TOKEN);
-  const guilds = await client.guilds.cache;
-  const price = await getSquidEthPrice();
-  const ethPrice = await getEthUsdPrice();
+  const [price, ethPrice, _] = await Promise.all([
+    getSquidEthPrice(),
+    getEthUsdPrice(),
+    client.login(process.env.DISCORD_TOKEN),
+  ]);
 
-  await Promise.all([
+  const guilds = client.guilds.cache;
+  await Promise.all(
     guilds.map(async (guild) => {
       const g = await guild.fetch();
       const n = g.me?.nickname;
@@ -57,11 +59,17 @@ export default async function handler(
       const isFlat = lastPrice == price;
       const updown = isFlat ? "→" : lastPrice < price ? "↗" : "↘";
 
+      console.log({
+        lastPrice,
+        price: price.toString(),
+        usd: price * ethPrice,
+      });
+
       g.me?.setNickname(
         `Ξ${price} ${updown}${isFlat ? "" : Math.abs(lastPrice - price)}`
       );
-    }),
-  ]);
+    })
+  );
 
   await client.user?.setPresence({
     activity: { name: `\$${price * ethPrice}`, type: 3 },
