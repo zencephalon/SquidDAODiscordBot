@@ -1,5 +1,5 @@
 {
-  "name": "dog-discord-bot",
+  "name": "squid-discord-bot",
   "private": true,
   "scripts": {
     "start": "ts-node index.ts"
