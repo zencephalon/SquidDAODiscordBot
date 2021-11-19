@@ -62,6 +62,7 @@ async function tick(client: Client) {
   );
 
   const usdPrice = price * ethPrice;
+  console.log({ usdPrice });
 
   await client.user?.setPresence({
     activity: { name: `\$${usdPrice.toLocaleString()}`, type: 3 },
