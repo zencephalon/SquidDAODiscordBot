@@ -72,8 +72,8 @@ async function tick(client: Client) {
 
 async function go() {
   const client = new Client({ ws: { intents: [Intents.FLAGS.GUILDS] } });
-  await client.login(process.env.DISCORD_TOKEN);
   client.on("debug", console.log);
+  await client.login(process.env.DISCORD_TOKEN);
   tick(client);
   setInterval(() => tick(client), 1000 * 60);
 }
