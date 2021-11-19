@@ -2,10 +2,7 @@
   "name": "dog-discord-bot",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "ts-node index.ts"
   },
   "dependencies": {
     "discord.js": "^12.5.3",
