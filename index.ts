@@ -1,12 +1,12 @@
 require("dotenv").config();
 
-// Require the necessary discord.js classes
-import { Client, Intents } from "discord.js";
-
 import { ethers } from "ethers";
 import { Contract } from "@ethersproject/contracts";
 
 import abi from "./lib/abi";
+
+import Bot from "./lib/bots/bot";
+import SquidPriceBot from "./lib/bots/squidPrice";
 
 export const provider = new ethers.providers.InfuraProvider(
   1,
@@ -34,48 +34,28 @@ async function getEthUsdPrice() {
   return price;
 }
 
-async function tick(client: Client) {
-  const [price, ethPrice] = await Promise.all([
+async function tick(bots: Bot[]) {
+  const [squidEthPrice, ethUsdPrice] = await Promise.all([
     getSquidEthPrice(),
     getEthUsdPrice(),
   ]);
 
-  const guilds = client.guilds.cache;
-  await Promise.all(
-    guilds.map(async (guild) => {
-      const g = await guild.fetch();
-      const n = g.me?.nickname;
-      const lastPrice = parseInt(n?.match(/^Ξ(\d+)/)?.[1] || "");
-      const isFlat = lastPrice == price;
-      const updown = isFlat ? "→" : lastPrice < price ? "↗" : "↘";
-
-      console.log({
-        lastPrice,
-        price: price.toString(),
-        usd: price * ethPrice,
-      });
-
-      g.me?.setNickname(
-        `Ξ${price} ${updown}${isFlat ? "" : Math.abs(lastPrice - price)}`
-      );
-    })
-  );
-
-  const usdPrice = price * ethPrice;
-  console.log({ usdPrice });
-
-  await client.user?.setPresence({
-    activity: { name: `\$${usdPrice.toLocaleString()}`, type: 3 },
-    status: "online",
+  bots.forEach((bot) => {
+    bot.update({
+      squidEthPrice,
+      ethUsdPrice,
+    });
   });
 }
 
 async function go() {
-  const client = new Client({ ws: { intents: [Intents.FLAGS.GUILDS] } });
-  client.on("debug", console.log);
-  await client.login(process.env.DISCORD_TOKEN);
-  tick(client);
-  setInterval(() => tick(client), 1000 * 60);
+  const squidPriceBot = new SquidPriceBot();
+  await squidPriceBot.init();
+
+  const bots = [squidPriceBot];
+
+  tick(bots);
+  setInterval(() => tick(bots), 1000 * 60);
 }
 
 go();
