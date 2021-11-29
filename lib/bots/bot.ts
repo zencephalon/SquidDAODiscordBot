@@ -1,6 +1,30 @@
-interface Bot {
-  init(): Promise<string>;
-  update(data: any): void;
+import { Client, Intents } from "discord.js";
+
+class Bot {
+  client: Client;
+  token?: string;
+
+  constructor(token?: string) {
+    this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+    this.token = token;
+    this.client.on("debug", console.log);
+  }
+
+  async init() {
+    return this.client.login(this.token);
+  }
+
+  async update(data: any) {}
+
+  async setNickname(name: string) {
+    const guilds = await this.client.guilds.cache;
+    await Promise.all(
+      guilds.map(async (guild) => {
+        const g = await guild.fetch();
+        g.me?.setNickname(name);
+      })
+    );
+  }
 }
 
 export default Bot;

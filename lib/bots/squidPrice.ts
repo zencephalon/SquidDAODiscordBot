@@ -2,20 +2,14 @@ import Bot from "./bot";
 
 import { Client, Intents } from "discord.js";
 
-import { formatEth, formatDollars } from "./format";
+import { formatEth, formatDollars } from "./utils/format";
 
-class SquidPrice implements Bot {
-  client: Client;
+class SquidPrice extends Bot {
   lastPrice?: number;
 
   constructor() {
-    this.client = new Client({ ws: { intents: [Intents.FLAGS.GUILDS] } });
-    this.client.on("debug", console.log);
+    super(process.env.SQUID_PRICE_TOKEN);
     this.lastPrice = undefined;
-  }
-
-  async init() {
-    return this.client.login(process.env.SQUID_PRICE_TOKEN);
   }
 
   getMomentum(price: number) {
@@ -42,19 +36,15 @@ class SquidPrice implements Bot {
     const usdPrice = price * ethPrice;
     const momentum = this.getMomentum(price);
 
-    const guilds = this.client.guilds.cache;
-    await Promise.all(
-      guilds.map(async (guild) => {
-        const g = await guild.fetch();
-        g.me?.setNickname(`Ξ${formatEth(price)} ${momentum}`);
-      })
-    );
+    this.setNickname(`Ξ${formatEth(price)} ${momentum}`);
 
     await this.client.user?.setPresence({
-      activity: {
-        name: `\$${formatDollars(usdPrice)}`,
-        type: 3,
-      },
+      activities: [
+        {
+          name: `\$${formatDollars(usdPrice)}`,
+          type: 3,
+        },
+      ],
       status: "online",
     });
 
