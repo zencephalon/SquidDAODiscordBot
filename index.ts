@@ -4,17 +4,20 @@ import { bots, Bot } from "./lib/bots";
 
 import getEthUsdPrice from "./lib/eth/getEthUsdPrice";
 import getSquidEthPrice from "./lib/eth/getSquidEthPrice";
+import getSquidSupply from "./lib/eth/getSquidSupply";
 
 async function tick(bots: Bot[]) {
-  const [squidEthPrice, ethUsdPrice] = await Promise.all([
+  const [squidEthPrice, ethUsdPrice, squidSupply] = await Promise.all([
     getSquidEthPrice(),
     getEthUsdPrice(),
+    getSquidSupply(),
   ]);
 
   bots.forEach((bot) => {
     bot.update({
       squidEthPrice,
       ethUsdPrice,
+      squidSupply,
     });
   });
 }

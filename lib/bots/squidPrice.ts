@@ -27,9 +27,11 @@ class SquidPrice extends Bot {
   async update({
     squidEthPrice,
     ethUsdPrice,
+    squidSupply,
   }: {
     squidEthPrice: number;
     ethUsdPrice: number;
+    squidSupply: number;
   }) {
     const price = squidEthPrice;
     const ethPrice = ethUsdPrice;
@@ -43,6 +45,10 @@ class SquidPrice extends Bot {
         {
           name: `\$${formatDollars(usdPrice)}`,
           type: 3,
+        },
+        {
+          name: `Supply: ${formatEth(squidSupply)}`,
+          type: 0,
         },
       ],
       status: "online",
