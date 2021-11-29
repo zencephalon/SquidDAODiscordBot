@@ -3,7 +3,7 @@ require("dotenv").config();
 import { ethers } from "ethers";
 import { Contract } from "@ethersproject/contracts";
 
-import abi from "./lib/abi";
+import sushi from "./lib/abi/sushi";
 
 import Bot from "./lib/bots/bot";
 import SquidPriceBot from "./lib/bots/squidPrice";
@@ -17,9 +17,8 @@ export const provider = new ethers.providers.InfuraProvider(
 const SQUID_WETH_PAIR = "0xfad704847967d9067df7a60910399155fca43fe8";
 const USDC_WETH_PAIR = "0x397ff1542f962076d0bfe58ea045ffa2d347aca0";
 
-const squidWethSushiswap = new Contract(SQUID_WETH_PAIR, abi, provider);
-
-const usdcWethSushiswap = new Contract(USDC_WETH_PAIR, abi, provider);
+const squidWethSushiswap = new Contract(SQUID_WETH_PAIR, sushi, provider);
+const usdcWethSushiswap = new Contract(USDC_WETH_PAIR, sushi, provider);
 
 async function getSquidEthPrice() {
   const [r0, r1] = await squidWethSushiswap.functions["getReserves"]();
