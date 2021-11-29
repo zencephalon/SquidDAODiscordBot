@@ -7,6 +7,7 @@ import abi from "./lib/abi";
 
 import Bot from "./lib/bots/bot";
 import SquidPriceBot from "./lib/bots/squidPrice";
+import EthPriceBot from "./lib/bots/ethPrice";
 
 export const provider = new ethers.providers.InfuraProvider(
   1,
@@ -23,14 +24,14 @@ const usdcWethSushiswap = new Contract(USDC_WETH_PAIR, abi, provider);
 async function getSquidEthPrice() {
   const [r0, r1] = await squidWethSushiswap.functions["getReserves"]();
 
-  const price = r1.div(r0).div(1e9);
+  const price = r1 / r0 / 1e9;
   return price;
 }
 
 async function getEthUsdPrice() {
   const [r0, r1] = await usdcWethSushiswap.functions["getReserves"]();
 
-  const price = r0.div(r1.div(1e12));
+  const price = r0 / r1.div(1e12);
   return price;
 }
 
@@ -49,10 +50,8 @@ async function tick(bots: Bot[]) {
 }
 
 async function go() {
-  const squidPriceBot = new SquidPriceBot();
-  await squidPriceBot.init();
-
-  const bots = [squidPriceBot];
+  const bots = [new SquidPriceBot(), new EthPriceBot()];
+  await Promise.all(bots.map((bot) => bot.init()));
 
   tick(bots);
   setInterval(() => tick(bots), 1000 * 60);

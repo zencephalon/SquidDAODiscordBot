@@ -2,6 +2,8 @@ import Bot from "./bot";
 
 import { Client, Intents } from "discord.js";
 
+import { formatEth, formatDollars } from "./format";
+
 class SquidPrice implements Bot {
   client: Client;
   lastPrice?: number;
@@ -25,7 +27,7 @@ class SquidPrice implements Bot {
     }
 
     const updown = this.lastPrice < price ? "↗" : "↘";
-    return `${updown}${Math.abs(this.lastPrice - price)}`;
+    return `${updown}${formatEth(Math.abs(this.lastPrice - price))}`;
   }
 
   async update({
@@ -44,18 +46,21 @@ class SquidPrice implements Bot {
     await Promise.all(
       guilds.map(async (guild) => {
         const g = await guild.fetch();
-        g.me?.setNickname(`Ξ${price} ${momentum}`);
+        g.me?.setNickname(`Ξ${formatEth(price)} ${momentum}`);
       })
     );
 
     await this.client.user?.setPresence({
-      activity: { name: `\$${usdPrice.toLocaleString()}`, type: 3 },
+      activity: {
+        name: `\$${formatDollars(usdPrice)}`,
+        type: 3,
+      },
       status: "online",
     });
 
     console.log({
       lastPrice: this.lastPrice,
-      price: price.toString(),
+      price: price,
       usd: price * ethPrice,
     });
 
