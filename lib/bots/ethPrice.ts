@@ -26,7 +26,7 @@ class EthPrice implements Bot {
     }
 
     const updown = this.lastPrice < price ? "↗" : "↘";
-    return `${updown}${Math.abs(this.lastPrice - price)}`;
+    return `${updown}${formatCents(Math.abs(this.lastPrice - price))}`;
   }
 
   async update({ ethUsdPrice }: { ethUsdPrice: number }) {
