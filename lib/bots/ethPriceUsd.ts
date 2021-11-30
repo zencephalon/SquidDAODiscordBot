@@ -2,11 +2,11 @@ import Bot from "./bot";
 
 import { formatCents } from "./utils/format";
 
-class EthPrice extends Bot {
+class EthPriceUsd extends Bot {
   lastPrice?: number;
 
   constructor() {
-    super(process.env.ETH_PRICE_TOKEN);
+    super(process.env.ETH_PRICE_USD);
     this.lastPrice = undefined;
   }
 
@@ -27,14 +27,10 @@ class EthPrice extends Bot {
     const momentum = this.getMomentum(price);
 
     this.setNickname(`$${formatCents(price)} ${momentum}`);
-
-    console.log({
-      lastPrice: this.lastPrice,
-      price: price,
-    });
+    this.setStatus("USD per ETH");
 
     this.lastPrice = price;
   }
 }
 
-export default EthPrice;
+export default EthPriceUsd;
