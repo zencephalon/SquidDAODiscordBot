@@ -33,7 +33,7 @@ class SquidPriceEth extends Bot {
     const momentum = this.getMomentum(price);
 
     this.setNickname(`Ξ${formatEth(price)} ${momentum}`);
-    this.setStatus("ETH per Squid");
+    this.setStatus("Price in ETH");
 
     this.lastPrice = price;
   }

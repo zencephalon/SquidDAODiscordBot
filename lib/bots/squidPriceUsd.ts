@@ -36,7 +36,7 @@ class SquidPriceUsd extends Bot {
     const momentum = this.getMomentum(usdPrice);
 
     this.setNickname(`\$${formatDollars(usdPrice)} ${momentum}`);
-    this.setStatus("USD per Squid");
+    this.setStatus("Price in USD");
 
     this.lastPrice = usdPrice;
   }
