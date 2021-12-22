@@ -35,7 +35,7 @@ async function go() {
   await tick(bots);
   refreshDisplay(bots);
   setInterval(() => tick(bots), 1000 * 120);
-  setInterval(() => refreshDisplay(bots), 1000 * 15);
+  setInterval(() => refreshDisplay(bots), 1000 * 30);
 }
 
 go();

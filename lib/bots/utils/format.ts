@@ -7,10 +7,10 @@ export const formatEth: Formatter = (number) =>
   });
 
 export const formatDollars: Formatter = (number) =>
-  number.toLocaleString(undefined, {
-    maximumFractionDigits: 0,
-    minimumFractionDigits: 0,
-  });
+  Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(number);
 
 export const formatCents: Formatter = (number) =>
   number.toLocaleString(undefined, {

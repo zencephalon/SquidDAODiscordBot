@@ -3,12 +3,6 @@ export type { Bot };
 
 import EthPriceUsd from "./ethPriceUsd";
 import SquidPrice from "./squidPrice";
-import SquidMcEth from "./squidMcEth";
-import SquidMcUsd from "./squidMcUsd";
+import SquidMc from "./squidMc";
 
-export const bots = [
-  new EthPriceUsd(),
-  new SquidPrice(),
-  new SquidMcEth(),
-  new SquidMcUsd(),
-];
+export const bots = [new EthPriceUsd(), new SquidPrice(), new SquidMc()];
