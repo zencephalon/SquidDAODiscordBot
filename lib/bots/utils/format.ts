@@ -33,3 +33,13 @@ export const formatMomentum = (
   const updown = lastNumber < number ? "↗" : "↘";
   return `${updown}${formatter(Math.abs(lastNumber - number))}`;
 };
+
+export const formatUsdMomentum = (last: number, current: number): string => {
+  const momentum = formatMomentum(formatDollars, last, current);
+  return `\$${formatDollars(current)} ${momentum}`;
+};
+
+export const formatEthMomentum = (last: number, current: number): string => {
+  const momentum = formatMomentum(formatEth, last, current);
+  return `Ξ${formatEth(current)} ${momentum}`;
+};

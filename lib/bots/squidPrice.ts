@@ -1,5 +1,5 @@
 import Bot, { BotInputs } from "./bot";
-import { formatDollars, formatEth, formatMomentum } from "./utils/format";
+import { formatUsdMomentum, formatEthMomentum } from "./utils/format";
 
 interface Outputs {
   usdPrice: number;
@@ -7,21 +7,13 @@ interface Outputs {
 }
 
 const usdPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
-  const momentum = formatMomentum(
-    formatDollars,
-    lastOutputs.usdPrice,
-    outputs.usdPrice
-  );
-  return `🦑= \$${formatDollars(outputs.usdPrice)} ${momentum}`;
+  const s = formatUsdMomentum(lastOutputs.usdPrice, outputs.usdPrice);
+  return `🦑= ${s}`;
 };
 
 const ethPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
-  const momentum = formatMomentum(
-    formatEth,
-    lastOutputs.ethPrice,
-    outputs.ethPrice
-  );
-  return `🦑= Ξ${formatEth(outputs.ethPrice)} ${momentum}`;
+  const s = formatEthMomentum(lastOutputs.ethPrice, outputs.ethPrice);
+  return `🦑= ${s}`;
 };
 
 const compute = (inputs: BotInputs): Outputs => {
