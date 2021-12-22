@@ -6,6 +6,13 @@ interface Outputs {
   ethPrice: number;
 }
 
+const compute = (inputs: BotInputs): Outputs => {
+  return {
+    ethPrice: inputs.squidEthPrice,
+    usdPrice: inputs.ethUsdPrice * inputs.squidEthPrice,
+  };
+};
+
 const usdPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
   const s = formatUsdMomentum(lastOutputs.usdPrice, outputs.usdPrice);
   return `🦑= ${s}`;
@@ -14,13 +21,6 @@ const usdPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
 const ethPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
   const s = formatEthMomentum(lastOutputs.ethPrice, outputs.ethPrice);
   return `🦑= ${s}`;
-};
-
-const compute = (inputs: BotInputs): Outputs => {
-  return {
-    ethPrice: inputs.squidEthPrice,
-    usdPrice: inputs.ethUsdPrice * inputs.squidEthPrice,
-  };
 };
 
 const displays = [

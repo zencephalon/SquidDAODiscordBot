@@ -34,6 +34,11 @@ export const formatMomentum = (
   return `${updown}${formatter(Math.abs(lastNumber - number))}`;
 };
 
+export const formatCentsMomentum = (last: number, current: number): string => {
+  const momentum = formatMomentum(formatCents, last, current);
+  return `\$${formatCents(current)} ${momentum}`;
+};
+
 export const formatUsdMomentum = (last: number, current: number): string => {
   const momentum = formatMomentum(formatDollars, last, current);
   return `\$${formatDollars(current)} ${momentum}`;
