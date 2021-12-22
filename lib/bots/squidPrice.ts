@@ -12,7 +12,7 @@ const usdPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
     lastOutputs.usdPrice,
     outputs.usdPrice
   );
-  return `\$${formatDollars(outputs.usdPrice)} ${momentum}`;
+  return `🦑= \$${formatDollars(outputs.usdPrice)} ${momentum}`;
 };
 
 const ethPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
@@ -21,7 +21,7 @@ const ethPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
     lastOutputs.ethPrice,
     outputs.ethPrice
   );
-  return `\$${formatEth(outputs.ethPrice)} ${momentum}`;
+  return `🦑= Ξ${formatEth(outputs.ethPrice)} ${momentum}`;
 };
 
 const compute = (inputs: BotInputs): Outputs => {
@@ -44,7 +44,7 @@ const displays = [
 
 class SquidPrice extends Bot<Outputs> {
   constructor() {
-    super(process.env.SQUID_PRICE_USD, compute, displays);
+    super(process.env.SQUID_PRICE, compute, displays);
   }
 }
 
