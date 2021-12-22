@@ -2,7 +2,7 @@ import Bot from "./bot";
 
 import { formatEth } from "./utils/format";
 
-class SquidMcEth extends Bot {
+class SquidMcEth extends Bot<{}> {
   lastMc?: number;
 
   constructor() {

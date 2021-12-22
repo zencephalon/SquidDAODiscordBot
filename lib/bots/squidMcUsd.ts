@@ -2,7 +2,7 @@ import Bot from "./bot";
 
 import { formatDollars } from "./utils/format";
 
-class SquidMcUsd extends Bot {
+class SquidMcUsd extends Bot<{}> {
   lastMc?: number;
 
   constructor() {

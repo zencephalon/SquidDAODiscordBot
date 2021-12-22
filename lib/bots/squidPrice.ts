@@ -1,43 +1,50 @@
-import Bot from "./bot";
-import { formatDollars, formatEth } from "./utils/format";
+import Bot, { BotInputs } from "./bot";
+import { formatDollars, formatEth, formatMomentum } from "./utils/format";
 
-class SquidPrice extends Bot {
-  lastPrice?: number;
+interface Outputs {
+  usdPrice: number;
+  ethPrice: number;
+}
 
+const usdPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
+  const momentum = formatMomentum(
+    formatDollars,
+    lastOutputs.usdPrice,
+    outputs.usdPrice
+  );
+  return `\$${formatDollars(outputs.usdPrice)} ${momentum}`;
+};
+
+const ethPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
+  const momentum = formatMomentum(
+    formatEth,
+    lastOutputs.ethPrice,
+    outputs.ethPrice
+  );
+  return `\$${formatEth(outputs.ethPrice)} ${momentum}`;
+};
+
+const compute = (inputs: BotInputs): Outputs => {
+  return {
+    ethPrice: inputs.squidEthPrice,
+    usdPrice: inputs.ethUsdPrice * inputs.squidEthPrice,
+  };
+};
+
+const displays = [
+  {
+    label: "USD per Squid",
+    getDisplay: usdPriceDisplay,
+  },
+  {
+    label: "ETH per Squid",
+    getDisplay: ethPriceDisplay,
+  },
+];
+
+class SquidPrice extends Bot<Outputs> {
   constructor() {
-    super(process.env.SQUID_PRICE_USD);
-    this.lastPrice = undefined;
-  }
-
-  getMomentum(price: number) {
-    if (!this.lastPrice) {
-      return "→";
-    }
-    if (this.lastPrice == price) {
-      return "→";
-    }
-
-    const updown = this.lastPrice < price ? "↗" : "↘";
-    return `${updown}${formatDollars(Math.abs(this.lastPrice - price))}`;
-  }
-
-  async update({
-    squidEthPrice,
-    ethUsdPrice,
-  }: {
-    squidEthPrice: number;
-    ethUsdPrice: number;
-    squidSupply: number;
-  }) {
-    const price = squidEthPrice;
-    const ethPrice = ethUsdPrice;
-    const usdPrice = price * ethPrice;
-    const momentum = this.getMomentum(usdPrice);
-
-    this.setNickname(`\$${formatDollars(usdPrice)} ${momentum}`);
-    this.setStatus("Price in USD");
-
-    this.lastPrice = usdPrice;
+    super(process.env.SQUID_PRICE_USD, compute, displays);
   }
 }
 

@@ -6,23 +6,31 @@ export interface BotInputs {
   squidSupply: number;
 }
 
-interface Display {
+interface Display<Outputs> {
   label: string;
-  getDisplay: (input?: BotInputs) => string;
+  getDisplay: (lastOutputs: Outputs, outputs: Outputs) => string;
 }
 
-class Bot {
+class Bot<Outputs> {
   client: Client;
   token?: string;
-  displays?: Display[];
+  displays?: Display<Outputs>[];
   inputs?: BotInputs;
   displayIndex = 0;
+  outputs?: Outputs;
+  lastOutputs?: Outputs;
+  compute?: (inputs: BotInputs) => Outputs;
 
-  constructor(token?: string, displays?: Display[]) {
+  constructor(
+    token?: string,
+    compute?: (input: BotInputs) => Outputs,
+    displays?: Display<Outputs>[]
+  ) {
     this.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
     this.token = token;
     this.client.on("debug", console.log);
     this.displays = displays;
+    this.compute = compute;
   }
 
   async init() {
@@ -30,17 +38,19 @@ class Bot {
   }
 
   async update(inputs: BotInputs) {
+    this.lastOutputs = this.outputs;
     this.inputs = inputs;
+    this.outputs = this.compute?.(inputs);
   }
 
   async refreshDisplay() {
-    if (!this.displays) {
+    if (!this.displays || !this.lastOutputs || !this.outputs) {
       return;
     }
     const displayNum = this.displays.length;
     const display = this.displays[this.displayIndex];
 
-    this.setNickname(display.getDisplay(this.inputs));
+    this.setNickname(display.getDisplay(this.lastOutputs, this.outputs));
     this.setStatus(display.label);
 
     this.displayIndex = (this.displayIndex + 1) % displayNum;

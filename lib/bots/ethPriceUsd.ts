@@ -2,7 +2,7 @@ import Bot from "./bot";
 
 import { formatCents } from "./utils/format";
 
-class EthPriceUsd extends Bot {
+class EthPriceUsd extends Bot<{}> {
   lastPrice?: number;
 
   constructor() {

@@ -2,7 +2,7 @@ import Bot from "./bot";
 
 import { formatEth } from "./utils/format";
 
-class SquidPriceEth extends Bot {
+class SquidPriceEth extends Bot<{}> {
   lastPrice?: number;
 
   constructor() {
