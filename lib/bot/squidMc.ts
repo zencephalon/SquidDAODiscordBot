@@ -1,5 +1,5 @@
 import Bot, { BotInputs } from "./bot";
-import { formatUsdMomentum, formatEthMomentum } from "./utils/format";
+import { formatUsdMomentum, formatEthMomentum } from "./util/format";
 
 interface Outputs {
   usdMc: number;

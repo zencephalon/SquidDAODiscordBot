@@ -1,6 +1,6 @@
 import Bot, { BotInputs } from "./bot";
 
-import { formatCentsMomentum } from "./utils/format";
+import { formatCentsMomentum } from "./util/format";
 
 interface Outputs {
   usdPrice: number;

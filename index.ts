@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-import { bots, Bot } from "./lib/bots";
+import { bots, Bot } from "./lib/bot";
 
 import getEthUsdPrice from "./lib/eth/getEthUsdPrice";
 import getSquidEthPrice from "./lib/eth/getSquidEthPrice";
