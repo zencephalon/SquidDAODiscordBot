@@ -4,6 +4,8 @@ export interface BotInputs {
   squidEthPrice: number;
   ethUsdPrice: number;
   squidSupply: number;
+  sSquidSupply: number;
+  sSquidIndex: number;
 }
 
 interface Display<Outputs> {

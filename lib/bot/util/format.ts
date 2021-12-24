@@ -6,6 +6,12 @@ export const formatEth: Formatter = (number) =>
     minimumFractionDigits: 1,
   });
 
+export const formatWhole: Formatter = (number) =>
+  number.toLocaleString(undefined, {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+  });
+
 export const formatDollars: Formatter = (number) =>
   Intl.NumberFormat("en-US", {
     notation: "compact",
