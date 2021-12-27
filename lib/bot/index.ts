@@ -1,4 +1,5 @@
 import Bot from "./bot";
+export { tick, refreshDisplay } from "./bot";
 export type { Bot };
 
 import EthPriceUsd from "./ethPriceUsd";

@@ -1,5 +1,11 @@
 import { Client, Intents } from "discord.js";
 
+import getEthUsdPrice from "../eth/getEthUsdPrice";
+import getSquidEthPrice from "../eth/getSquidEthPrice";
+import getSquidSupply from "../eth/getSquidSupply";
+import getSSquidSupply from "../eth/getSSquidSupply";
+import getSSquidIndex from "../eth/getSSquidIndex";
+
 export interface BotInputs {
   squidEthPrice: number;
   ethUsdPrice: number;
@@ -8,9 +14,36 @@ export interface BotInputs {
   sSquidIndex: number;
 }
 
+export async function tick(bots: Bot<any>[]) {
+  const [squidEthPrice, ethUsdPrice, squidSupply, sSquidSupply, sSquidIndex] =
+    await Promise.all([
+      getSquidEthPrice(),
+      getEthUsdPrice(),
+      getSquidSupply(),
+      getSSquidSupply(),
+      getSSquidIndex(),
+    ]);
+
+  bots.forEach((bot) => {
+    bot.update({
+      squidEthPrice,
+      ethUsdPrice,
+      squidSupply,
+      sSquidSupply,
+      sSquidIndex,
+    });
+  });
+}
+
 interface Display<Outputs> {
   label: string;
   getDisplay: (lastOutputs: Outputs, outputs: Outputs) => string;
+}
+
+export async function refreshDisplay(bots: Bot<any>[]) {
+  bots.forEach((bot) => {
+    bot.refreshDisplay();
+  });
 }
 
 class Bot<Outputs> {
