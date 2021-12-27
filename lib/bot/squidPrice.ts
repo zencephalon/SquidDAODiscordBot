@@ -15,12 +15,12 @@ const compute = (inputs: BotInputs): Outputs => {
 
 const usdPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
   const s = formatUsdMomentum(lastOutputs.usdPrice, outputs.usdPrice);
-  return `🦑= ${s}`;
+  return `${s}`;
 };
 
 const ethPriceDisplay = (lastOutputs: Outputs, outputs: Outputs) => {
   const s = formatEthMomentum(lastOutputs.ethPrice, outputs.ethPrice);
-  return `🦑= ${s}`;
+  return `${s}`;
 };
 
 const displays = [

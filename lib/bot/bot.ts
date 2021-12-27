@@ -1,28 +1,37 @@
 import { Client, Intents } from "discord.js";
 
 import getEthUsdPrice from "../eth/getEthUsdPrice";
-import getSquidEthPrice from "../eth/getSquidEthPrice";
 import getSquidSupply from "../eth/getSquidSupply";
 import getSSquidSupply from "../eth/getSSquidSupply";
 import getSSquidIndex from "../eth/getSSquidIndex";
+import getSquidEthReserves from "../eth/getSquidEthReserves";
 
 export interface BotInputs {
   squidEthPrice: number;
   ethUsdPrice: number;
   squidSupply: number;
   sSquidSupply: number;
+  lpSquidSupply: number;
   sSquidIndex: number;
 }
 
 export async function tick(bots: Bot<any>[]) {
-  const [squidEthPrice, ethUsdPrice, squidSupply, sSquidSupply, sSquidIndex] =
-    await Promise.all([
-      getSquidEthPrice(),
-      getEthUsdPrice(),
-      getSquidSupply(),
-      getSSquidSupply(),
-      getSSquidIndex(),
-    ]);
+  const [
+    [squidReserves, ethReserves],
+    ethUsdPrice,
+    squidSupply,
+    sSquidSupply,
+    sSquidIndex,
+  ] = await Promise.all([
+    getSquidEthReserves(),
+    getEthUsdPrice(),
+    getSquidSupply(),
+    getSSquidSupply(),
+    getSSquidIndex(),
+  ]);
+
+  const lpSquidSupply = squidReserves / 1e9;
+  const squidEthPrice = ethReserves / squidReserves / 1e9;
 
   bots.forEach((bot) => {
     bot.update({
@@ -31,6 +40,7 @@ export async function tick(bots: Bot<any>[]) {
       squidSupply,
       sSquidSupply,
       sSquidIndex,
+      lpSquidSupply,
     });
   });
 }
